@@ -40,7 +40,10 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.test
 .env.local
+.env.development
+.env.production
 
 # temp directory
 .temp
@@ -54,3 +57,10 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Dockerfiles
+*Dockerfile*
+docker-compose*.yaml
+
+# GraphQL schema
+src/schema.gql
