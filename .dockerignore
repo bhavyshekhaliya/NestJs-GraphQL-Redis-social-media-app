@@ -1,0 +1,35 @@
+# Node.js dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+.env.development
+.env.production
+
+# Local development
+.DS_Store
+
+# Debugger settings
+.vscode
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git
+.gitignore
+
+# Build output
+dist
+
+# Miscellaneous
+*.swp
+*~

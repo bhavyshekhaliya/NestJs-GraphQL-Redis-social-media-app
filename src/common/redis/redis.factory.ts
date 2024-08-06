@@ -14,6 +14,11 @@ export const RedisFactory: FactoryProvider<Redis> = {
             host: configService.getOrThrow<string>('REDIS_HOST'),
             port: configService.getOrThrow<number>('REDIS_PORT'),
             password: configService.getOrThrow<string>('REDIS_PASSWORD'),
+            // maxRetriesPerRequest: null,
+            // retryStrategy(times) {
+            //     const delay = Math.min(times * 50, 2000);
+            //     return delay;
+            // },
         });
 
         // Handle Redis error events

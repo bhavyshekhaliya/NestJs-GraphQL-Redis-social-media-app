@@ -1,0 +1,49 @@
+version: '3.8'
+
+services: 
+  app: 
+    build: .
+    container_name: social_media_app
+    ports:
+      - "2244:2244"
+    depends_on: 
+      - mongo
+      - redis
+    environment:
+      PORT: 2244
+      NODE_ENV: development
+      MONGODB_URI: mongodb+srv://user:mongoDB@clustear0.kj55laaa.mongodb.net
+      GRAPHQL_PLAYGROUND: true
+      JWT_ACCESS_SECRET: xyzSecretKey
+      JWT_REFRESH_SECRET: xyzRefrshkey
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redispassword
+    volumes:
+      - .:/usr/src/app  
+      - node_modules:/usr/src/app/node_modules
+
+  mongo: 
+    image: mongo
+    container_name: mongo
+    ports: 
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: mongoDBB245  
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server --requirepass redispassword 
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  node_modules:   
+  redis_data:
