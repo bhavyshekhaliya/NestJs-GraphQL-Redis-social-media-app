@@ -39,7 +39,8 @@ export class UserService {
         updateUserDto.password,
       );
     }
-    return this.toEntity(
+
+    const updatedUser = this.toEntity(
       await this.userRepository.findOneAndUpdate(
         { _id },
         {
@@ -49,11 +50,24 @@ export class UserService {
         },
       ),
     );
+
+    // Delete the cached user
+    await this.redisService.delete('user', _id);
+
+    // Optionally, update the cache with the new data
+    await this.redisService.setWithExpiry('user', _id, JSON.stringify(updatedUser), 3600);
+
+    return updatedUser;
   }
 
   // Remove user
   async remove(_id: string): Promise<User> {
-    return this.toEntity(await this.userRepository.findOneAndDelete({ _id }));
+    const removeUser = this.toEntity(await this.userRepository.findOneAndDelete({ _id }));
+
+    // Delete the cached user
+    await this.redisService.delete('user',_id);
+
+    return removeUser;
   }
 
   // Convert the UserDocument into the User type
@@ -64,5 +78,4 @@ export class UserService {
     delete user.password;
     return user;
   }
-
 }

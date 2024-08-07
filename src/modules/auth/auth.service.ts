@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayload, Tokens } from 'src/common/types/common.type';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { RedisService } from 'src/common/redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,8 @@ export class AuthService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly jwtService: JwtService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly redisService: RedisService
     ) { }
 
     // create a new user ( SignUp )
@@ -27,6 +29,9 @@ export class AuthService {
             const token = await this.getTokens(newUser._id.toString(), newUser.userName);
 
             await this.updateRtHash(newUser._id.toString(), token.refreshToken);
+
+            // cache the new token
+            await this.cacheTokens(newUser._id.toString(), token);
 
             return {
                 ...newUser,
@@ -53,6 +58,9 @@ export class AuthService {
 
             await this.updateRtHash(user._id.toString(), token.refreshToken);
 
+            // cache the new token
+            await this.cacheTokens(user._id.toString(), token);
+
             return {
                 ...user,
                 accessToken: token.accessToken,
@@ -73,6 +81,9 @@ export class AuthService {
                 }
             }
             );
+
+            // Remove tokens from cache
+            await this.redisService.delete('tokens', userId);
 
             if (isLoggedOut) {
                 return true;
@@ -149,5 +160,17 @@ export class AuthService {
             accessToken: at,
             refreshToken: rt,
         };
+    }
+
+    // cache the tokens in Redis
+    async cacheTokens(userId: string, tokens: Tokens): Promise<void> {
+        const accessTokenExpiry = 15 * 60; // 15 minutes in seconds
+        const refreshTokenExpiry = 7 * 24 * 60 * 60; // 7 days in seconds
+
+        // Cache access token with 15 minutes expiry
+        await this.redisService.setWithExpiry('tokens',`accessToken:${userId}`, tokens.accessToken, accessTokenExpiry);
+        
+        // Cache refresh token with 7 days expiry
+        await this.redisService.setWithExpiry('tokens',`refreshToken:${userId}`, tokens.refreshToken, refreshTokenExpiry);
     }
 }
