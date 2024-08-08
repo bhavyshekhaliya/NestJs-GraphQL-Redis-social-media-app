@@ -19,7 +19,7 @@ export class AuthService {
     ) { }
 
     // create a new user ( SignUp )
-    async createUser(userName: string, password: string): Promise<User> {
+    async createUser(userName: string, password: string): Promise<Partial<User>> {
         try {
             const newUser = await this.userRepository.create({
                 userName,

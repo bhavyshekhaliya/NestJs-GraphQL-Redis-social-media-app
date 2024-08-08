@@ -15,4 +15,7 @@ export class User extends AbstractSchema {
 
     @Field(() => String, { nullable: true })
     refreshToken?: string
+
+    @Field(() => String, { nullable: true })
+    profileImageUrl: string
 }

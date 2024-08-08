@@ -11,6 +11,8 @@ import { DatabaseModule } from './common/database/database.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from './common/redis/redis.module';
+import { PostModule } from './modules/post/post.module';
+import { S3Module } from './common/s3/s3.module';
 
 @Module({
   imports: [
@@ -80,6 +82,8 @@ import { RedisModule } from './common/redis/redis.module';
     DatabaseModule,
     UserModule,
     AuthModule,
+    PostModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService],
